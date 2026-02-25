@@ -61,7 +61,7 @@ export function AtlediCard({ results, path }: Props) {
 
       <p className="atledi-card__text">
         {isThinking && (
-          <span style={{ color: 'var(--oxco-gray-500)' }}>
+          <span style={{ color: 'var(--dark-muted)' }}>
             <span className="atledi-card__cursor">|</span>
           </span>
         )}

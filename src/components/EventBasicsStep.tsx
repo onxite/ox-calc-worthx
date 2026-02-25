@@ -18,12 +18,14 @@ const VENUE_TYPES = [
   { value: 'other', label: 'Other' },
 ];
 
-function getFillRateClass(rate: number): string {
-  if (rate >= 0.95) return 'fill-rate--soldout';
-  if (rate >= 0.90) return 'fill-rate--high';
-  if (rate >= 0.75) return 'fill-rate--strong';
-  if (rate >= 0.50) return 'fill-rate--moderate';
-  return 'fill-rate--weak';
+const DURATION_MARKERS = [1, 4, 8, 12, 24, 48, 72];
+const ATTENDANCE_MARKERS = [10, 25, 50, 75, 100];
+
+function getFillRateColor(rate: number): string {
+  if (rate >= 0.90) return 'var(--oxco-teal)';
+  if (rate >= 0.70) return 'var(--oxco-green)';
+  if (rate >= 0.50) return 'var(--oxco-yellow)';
+  return 'var(--oxco-red)';
 }
 
 function getFillRateLabel(rate: number): string {
@@ -34,11 +36,25 @@ function getFillRateLabel(rate: number): string {
   return 'Weak';
 }
 
+function getFillRateClass(rate: number): string {
+  if (rate >= 0.95) return 'fill-rate--soldout';
+  if (rate >= 0.90) return 'fill-rate--high';
+  if (rate >= 0.75) return 'fill-rate--strong';
+  if (rate >= 0.50) return 'fill-rate--moderate';
+  return 'fill-rate--weak';
+}
+
 export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Props) {
   const fillRate = event.capacity > 0 ? event.attendance / event.capacity : 0;
+  const fillPct = Math.min(Math.round(fillRate * 100), 100);
 
   const update = (partial: Partial<EventInputs>) => {
     onChange({ ...event, ...partial });
+  };
+
+  const handleFillPctChange = (pct: number) => {
+    const attendance = Math.round(event.capacity * (pct / 100));
+    update({ attendance: Math.max(50, attendance) });
   };
 
   return (
@@ -51,7 +67,7 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
         </p>
       </div>
 
-      <div className="form-grid" style={{ marginBottom: 16 }}>
+      <div className="form-grid" style={{ marginBottom: 24 }}>
         <div className="form-group form-group--full">
           <label className="input-label">Event Name</label>
           <input
@@ -77,18 +93,6 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
         </div>
 
         <div className="form-group">
-          <label className="input-label">Duration (hours)</label>
-          <input
-            className="input-field"
-            type="number"
-            min={1}
-            max={72}
-            value={event.durationHours}
-            onChange={(e) => update({ durationHours: Number(e.target.value) || 1 })}
-          />
-        </div>
-
-        <div className="form-group">
           <label className="input-label">Venue Capacity</label>
           <input
             className="input-field"
@@ -98,28 +102,89 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
             onChange={(e) => update({ capacity: Number(e.target.value) || 100 })}
           />
         </div>
+      </div>
 
-        <div className="form-group">
-          <label className="input-label">Expected Attendance</label>
-          <input
-            className="input-field"
-            type="number"
-            min={50}
-            value={event.attendance}
-            onChange={(e) => update({ attendance: Number(e.target.value) || 50 })}
-          />
+      {/* ── Duration Fader ── */}
+      <div style={{ marginBottom: 28 }}>
+        <label className="input-label">Duration</label>
+        <div className="fader">
+          <div className="fader__value">
+            {event.durationHours}h
+          </div>
+          <div className="fader__track-wrap">
+            <input
+              className="fader__input"
+              type="range"
+              min={1}
+              max={72}
+              step={1}
+              value={event.durationHours}
+              onChange={(e) => update({ durationHours: Number(e.target.value) })}
+              style={{
+                background: `linear-gradient(to right, var(--oxco-teal) ${((event.durationHours - 1) / 71) * 100}%, var(--oxco-gray-700) ${((event.durationHours - 1) / 71) * 100}%)`,
+              }}
+            />
+          </div>
+          <div className="fader__markers">
+            {DURATION_MARKERS.map((h) => (
+              <span key={h} className="fader__marker">{h}h</span>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Fill rate indicator */}
-      <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: '0.75rem', color: 'var(--oxco-gray-400)' }}>Fill Rate:</span>
-        <span className={`fill-rate ${getFillRateClass(fillRate)}`}>
-          {Math.round(fillRate * 100)}% &mdash; {getFillRateLabel(fillRate)}
-        </span>
+      {/* ── Attendance % Fader ── */}
+      <div style={{ marginBottom: 24 }}>
+        <label className="input-label">Expected Attendance</label>
+        <div className="fader">
+          <div className="fader__value">
+            {fillPct}%
+            <span className="fader__sub" style={{ marginLeft: 8, display: 'inline' }}>
+              &mdash; {event.attendance.toLocaleString()} people
+            </span>
+          </div>
+          <div className="fader__track-wrap">
+            <input
+              className="fader__input"
+              type="range"
+              min={10}
+              max={100}
+              step={5}
+              value={fillPct}
+              onChange={(e) => handleFillPctChange(Number(e.target.value))}
+              style={{
+                background: `linear-gradient(to right, ${getFillRateColor(fillRate)} ${fillPct}%, var(--oxco-gray-700) ${fillPct}%)`,
+              }}
+            />
+          </div>
+
+          {/* Venue fill visualization bar */}
+          <div className="venue-fill">
+            <div className="venue-fill__bar">
+              <div
+                className="venue-fill__progress"
+                style={{
+                  width: `${Math.min(fillPct, 100)}%`,
+                  background: getFillRateColor(fillRate),
+                }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="fader__markers" style={{ flex: 1 }}>
+              {ATTENDANCE_MARKERS.map((p) => (
+                <span key={p} className="fader__marker">{p}%</span>
+              ))}
+            </div>
+            <span className={`fill-rate ${getFillRateClass(fillRate)}`} style={{ marginLeft: 12, whiteSpace: 'nowrap' }}>
+              {getFillRateLabel(fillRate)}
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Signal Boost inputs */}
+      {/* ── Signal Boost inputs ── */}
       <div style={{ borderTop: '1px solid var(--oxco-gray-700)', paddingTop: 16, marginBottom: 16 }}>
         <div
           className="mono"
