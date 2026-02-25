@@ -27,6 +27,7 @@ export interface EventInputs {
   capacity: number;
   attendance: number;
   durationHours: number;
+  eventDays: number;
   editionNumber: number;
   totalSponsors: number;
   hasWaitlist: boolean;
@@ -111,7 +112,8 @@ export function valuationEngine(inputs: ValuationInputs): ValuationResult {
     // Capacity check for flow-based assets
     let impressions = baseImpressions;
     if (asset.brandExposurePerHour) {
-      const maxCapacity = asset.brandExposurePerHour * event.durationHours * sel.quantity;
+      const totalHours = event.durationHours * event.eventDays;
+      const maxCapacity = asset.brandExposurePerHour * totalHours * sel.quantity;
       impressions = Math.min(impressions, maxCapacity);
     }
 

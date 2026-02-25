@@ -65,13 +65,13 @@ export function SignalBoostPanel({ signalBoost, baseValue, finalValue }: Props) 
         style={{
           marginTop: 16,
           paddingTop: 12,
-          borderTop: '1px solid var(--oxco-gray-700)',
+          borderTop: '1px solid var(--dark-border)',
           display: 'flex',
           justifyContent: 'space-between',
           fontSize: '0.8125rem',
         }}
       >
-        <span style={{ color: 'var(--oxco-gray-400)' }}>
+        <span style={{ color: 'var(--dark-muted)' }}>
           Base: ${baseValue.toLocaleString()}
         </span>
         <span style={{ color: 'var(--oxco-teal)', fontWeight: 700 }}>

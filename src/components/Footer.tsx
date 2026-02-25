@@ -71,7 +71,7 @@ export function Footer() {
               <img
                 src={product.logo}
                 alt={product.alt}
-                style={{ height: product.height, width: 'auto', display: 'block' }}
+                style={{ height: product.height, width: 'auto', display: 'block', filter: 'brightness(0)' }}
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             </a>

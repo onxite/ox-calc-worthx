@@ -1,4 +1,5 @@
 import type { EventInputs } from '@/engine/valuation';
+import { ConsoleFader } from './ConsoleFader';
 
 interface Props {
   event: EventInputs;
@@ -18,12 +19,34 @@ const VENUE_TYPES = [
   { value: 'other', label: 'Other' },
 ];
 
-function getFillRateClass(rate: number): string {
-  if (rate >= 0.95) return 'fill-rate--soldout';
-  if (rate >= 0.90) return 'fill-rate--high';
-  if (rate >= 0.75) return 'fill-rate--strong';
-  if (rate >= 0.50) return 'fill-rate--moderate';
-  return 'fill-rate--weak';
+const DURATION_FADER_MARKERS = [
+  { value: 1, label: '1h' },
+  { value: 2, label: '2h' },
+  { value: 4, label: '4h' },
+  { value: 6, label: '6h' },
+  { value: 8, label: '8h' },
+];
+
+const ATTENDANCE_FADER_MARKERS = [
+  { value: 10, label: '10%' },
+  { value: 25, label: '25%' },
+  { value: 50, label: '50%' },
+  { value: 75, label: '75%' },
+  { value: 100, label: '100%' },
+];
+
+function getFillRateColor(rate: number): string {
+  if (rate >= 0.90) return 'var(--oxco-teal)';
+  if (rate >= 0.70) return 'var(--oxco-green)';
+  if (rate >= 0.50) return 'var(--oxco-yellow)';
+  return 'var(--oxco-red)';
+}
+
+function getFillRateHex(rate: number): string {
+  if (rate >= 0.90) return '#5CFEE4';
+  if (rate >= 0.70) return '#22C55E';
+  if (rate >= 0.50) return '#EAB308';
+  return '#EF4444';
 }
 
 function getFillRateLabel(rate: number): string {
@@ -34,11 +57,25 @@ function getFillRateLabel(rate: number): string {
   return 'Weak';
 }
 
+function getFillRateClass(rate: number): string {
+  if (rate >= 0.95) return 'fill-rate--soldout';
+  if (rate >= 0.90) return 'fill-rate--high';
+  if (rate >= 0.75) return 'fill-rate--strong';
+  if (rate >= 0.50) return 'fill-rate--moderate';
+  return 'fill-rate--weak';
+}
+
 export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Props) {
   const fillRate = event.capacity > 0 ? event.attendance / event.capacity : 0;
+  const fillPct = Math.min(Math.round(fillRate * 100), 100);
 
   const update = (partial: Partial<EventInputs>) => {
     onChange({ ...event, ...partial });
+  };
+
+  const handleFillPctChange = (pct: number) => {
+    const attendance = Math.round(event.capacity * (pct / 100));
+    update({ attendance: Math.max(50, attendance) });
   };
 
   return (
@@ -51,7 +88,7 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
         </p>
       </div>
 
-      <div className="form-grid" style={{ marginBottom: 16 }}>
+      <div className="form-grid" style={{ marginBottom: 24 }}>
         <div className="form-group form-group--full">
           <label className="input-label">Event Name</label>
           <input
@@ -77,18 +114,6 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
         </div>
 
         <div className="form-group">
-          <label className="input-label">Duration (hours)</label>
-          <input
-            className="input-field"
-            type="number"
-            min={1}
-            max={72}
-            value={event.durationHours}
-            onChange={(e) => update({ durationHours: Number(e.target.value) || 1 })}
-          />
-        </div>
-
-        <div className="form-group">
           <label className="input-label">Venue Capacity</label>
           <input
             className="input-field"
@@ -98,28 +123,74 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
             onChange={(e) => update({ capacity: Number(e.target.value) || 100 })}
           />
         </div>
+      </div>
 
-        <div className="form-group">
-          <label className="input-label">Expected Attendance</label>
-          <input
-            className="input-field"
-            type="number"
-            min={50}
-            value={event.attendance}
-            onChange={(e) => update({ attendance: Number(e.target.value) || 50 })}
+      {/* ── Mixing Console ── */}
+      <div className="console-panel">
+        <div className="console-panel__title">&#9670; Mixing Console</div>
+        <div className="console-panel__faders">
+          <ConsoleFader
+            label="Duration"
+            value={event.durationHours}
+            min={1}
+            max={8}
+            step={1}
+            color="#5CFEE4"
+            valueDisplay={`${event.durationHours}h`}
+            markers={DURATION_FADER_MARKERS}
+            onChange={(v) => update({ durationHours: v })}
           />
+          <ConsoleFader
+            label="Attendance"
+            value={fillPct}
+            min={10}
+            max={100}
+            step={5}
+            color={getFillRateHex(fillRate)}
+            valueDisplay={`${fillPct}%`}
+            subDisplay={`${event.attendance.toLocaleString()} people`}
+            markers={ATTENDANCE_FADER_MARKERS}
+            onChange={handleFillPctChange}
+          />
+        </div>
+
+        {/* Event Days */}
+        <div className="console-panel__days">
+          <span className="console-panel__days-label">Event Days</span>
+          <div className="console-panel__days-pills">
+            {[1, 2, 3, 4, 5].map((d) => (
+              <button
+                key={d}
+                className={`console-panel__day-pill${event.eventDays === d ? ' console-panel__day-pill--active' : ''}`}
+                onClick={() => update({ eventDays: d })}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="console-panel__total-hours">
+          {event.durationHours}h &times; {event.eventDays} day{event.eventDays > 1 ? 's' : ''} = {event.durationHours * event.eventDays}h total
+        </div>
+
+        {/* Venue fill + status badge */}
+        <div className="console-panel__status">
+          <div className="venue-fill__bar" style={{ flex: 1, background: 'var(--dark-border)' }}>
+            <div
+              className="venue-fill__progress"
+              style={{
+                width: `${Math.min(fillPct, 100)}%`,
+                background: getFillRateColor(fillRate),
+              }}
+            />
+          </div>
+          <span className={`fill-rate ${getFillRateClass(fillRate)}`} style={{ whiteSpace: 'nowrap' }}>
+            {getFillRateLabel(fillRate)}
+          </span>
         </div>
       </div>
 
-      {/* Fill rate indicator */}
-      <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: '0.75rem', color: 'var(--oxco-gray-400)' }}>Fill Rate:</span>
-        <span className={`fill-rate ${getFillRateClass(fillRate)}`}>
-          {Math.round(fillRate * 100)}% &mdash; {getFillRateLabel(fillRate)}
-        </span>
-      </div>
-
-      {/* Signal Boost inputs */}
+      {/* ── Signal Boost inputs ── */}
       <div style={{ borderTop: '1px solid var(--oxco-gray-700)', paddingTop: 16, marginBottom: 16 }}>
         <div
           className="mono"

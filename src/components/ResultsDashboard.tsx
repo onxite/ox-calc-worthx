@@ -81,20 +81,9 @@ export function ResultsDashboard({ results, path }: Props) {
         </div>
       </div>
 
-      {/* Purpose breakdown */}
-      <div className="card" style={{ marginBottom: 32 }}>
-        <div
-          className="mono"
-          style={{
-            fontSize: '0.625rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.15em',
-            color: 'var(--oxco-teal)',
-            marginBottom: 16,
-          }}
-        >
-          Value by Purpose
-        </div>
+      {/* Purpose breakdown (dark island) */}
+      <div className="purpose-breakdown">
+        <div className="purpose-breakdown__title">Value by Purpose</div>
         {(['see', 'engage', 'try', 'act'] as const).map((purpose) => {
           const value = results.purposeTotals[purpose];
           const pct = results.unpluggedTotal > 0 ? (value / results.unpluggedTotal) * 100 : 0;
@@ -106,26 +95,21 @@ export function ResultsDashboard({ results, path }: Props) {
           };
 
           return (
-            <div key={purpose} style={{ marginBottom: 12 }}>
+            <div key={purpose} className="purpose-breakdown__row">
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span
-                  className="mono"
-                  style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: colors[purpose] }}
-                >
+                <span className="purpose-breakdown__label" style={{ color: colors[purpose] }}>
                   {purpose}
                 </span>
-                <span className="mono" style={{ fontSize: '0.75rem', color: 'var(--oxco-gray-300)' }}>
+                <span className="purpose-breakdown__value">
                   ${value.toLocaleString()} ({Math.round(pct)}%)
                 </span>
               </div>
-              <div style={{ height: 6, background: 'var(--oxco-gray-700)', borderRadius: 3 }}>
+              <div className="purpose-breakdown__bar">
                 <div
+                  className="purpose-breakdown__fill"
                   style={{
-                    height: '100%',
                     width: `${Math.min(pct, 100)}%`,
                     background: colors[purpose],
-                    borderRadius: 3,
-                    transition: 'width 0.4s ease',
                   }}
                 />
               </div>
