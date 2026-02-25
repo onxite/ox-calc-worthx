@@ -21,12 +21,10 @@ const VENUE_TYPES = [
 
 const DURATION_FADER_MARKERS = [
   { value: 1, label: '1h' },
+  { value: 2, label: '2h' },
   { value: 4, label: '4h' },
+  { value: 6, label: '6h' },
   { value: 8, label: '8h' },
-  { value: 12, label: '12h' },
-  { value: 24, label: '24h' },
-  { value: 48, label: '48h' },
-  { value: 72, label: '72h' },
 ];
 
 const ATTENDANCE_FADER_MARKERS = [
@@ -135,7 +133,7 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
             label="Duration"
             value={event.durationHours}
             min={1}
-            max={72}
+            max={8}
             step={1}
             color="#5CFEE4"
             valueDisplay={`${event.durationHours}h`}
@@ -154,6 +152,25 @@ export function EventBasicsStep({ event, onChange, onComplete, isComplete }: Pro
             markers={ATTENDANCE_FADER_MARKERS}
             onChange={handleFillPctChange}
           />
+        </div>
+
+        {/* Event Days */}
+        <div className="console-panel__days">
+          <span className="console-panel__days-label">Event Days</span>
+          <div className="console-panel__days-pills">
+            {[1, 2, 3, 4, 5].map((d) => (
+              <button
+                key={d}
+                className={`console-panel__day-pill${event.eventDays === d ? ' console-panel__day-pill--active' : ''}`}
+                onClick={() => update({ eventDays: d })}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="console-panel__total-hours">
+          {event.durationHours}h &times; {event.eventDays} day{event.eventDays > 1 ? 's' : ''} = {event.durationHours * event.eventDays}h total
         </div>
 
         {/* Venue fill + status badge */}

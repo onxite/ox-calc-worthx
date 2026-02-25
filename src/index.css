@@ -520,6 +520,64 @@ h1, h2, h3, h4 {
   border-top: 1px solid var(--dark-border);
 }
 
+.console-panel__days {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.console-panel__days-label {
+  font-family: var(--font-section);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--dark-muted);
+}
+
+.console-panel__days-pills {
+  display: flex;
+  gap: 6px;
+}
+
+.console-panel__day-pill {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--dark-border);
+  background: transparent;
+  color: var(--dark-muted);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.console-panel__day-pill:hover {
+  border-color: var(--oxco-teal);
+  color: var(--oxco-teal);
+}
+
+.console-panel__day-pill--active {
+  background: var(--oxco-teal);
+  border-color: var(--oxco-teal);
+  color: var(--oxco-black);
+  box-shadow: 0 0 12px rgba(92, 254, 228, 0.3);
+}
+
+.console-panel__total-hours {
+  text-align: center;
+  font-family: var(--font-section);
+  font-size: 0.5625rem;
+  color: var(--dark-muted);
+  margin-top: 6px;
+  letter-spacing: 0.1em;
+}
+
 /* Vertical console fader (channel strip) */
 .console-fader {
   display: flex;

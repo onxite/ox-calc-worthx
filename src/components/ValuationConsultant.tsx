@@ -22,7 +22,8 @@ const DEFAULT_EVENT: EventInputs = {
   venueType: 'outdoor_festival',
   capacity: 10000,
   attendance: 7500,
-  durationHours: 8,
+  durationHours: 4,
+  eventDays: 1,
   editionNumber: 1,
   totalSponsors: 5,
   hasWaitlist: false,
@@ -95,7 +96,7 @@ export function ValuationConsultant({ path, onBack }: Props) {
           <UnpluggedAssetsStep
             assets={assets}
             onChange={setAssets}
-            durationHours={event.durationHours}
+            durationHours={event.durationHours * event.eventDays}
             attendance={event.attendance}
           />
         )}
