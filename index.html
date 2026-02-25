@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/icons/ox-collective-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OX-Collective Valuator — What Is My Sponsorship Inventory Worth? | Onxite</title>
+    <meta name="description" content="Free AI-powered sponsorship valuation tool. Value your current inventory, discover premium opportunities, and see what you're leaving on the table. Powered by Signal Boost and the MENT methodology." />
+    <link rel="canonical" href="https://calc-worthx.onxite.com/" />
+
+    <!-- Google tag (gtag.js) — GA4 property TBD -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    -->
+
+    <!-- Fonts: DM Sans (body) + Space Mono (display/numbers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="OX-Collective Valuator — Your AI Sponsorship Consultant | Onxite" />
+    <meta property="og:description" content="Value your sponsorship inventory in 5 minutes. Discover how to make it worth 2-3x more with Signal Boost and the MENT methodology." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://calc-worthx.onxite.com/" />
+    <meta property="og:image" content="/logos/ox-collective.svg" />
+
+    <!-- FAQ Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is sponsorship value calculated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The OX-Collective Valuator uses an 8-step methodology: per-asset valuation based on CPM and exposure time, market adjustment via DMA multipliers, and a Signal Boost premium based on 5 data-inferred signals (demand, maturity, exclusivity, depth, amplification)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Signal Boost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Signal Boost is a data-inferred premium multiplier (0.85x to 1.45x) that reads factual signals from your event data — fill rate, edition history, sponsor count, asset depth, and media amplification — to determine if your inventory commands a premium or discount."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is CPHA (Cost Per Hour of Attention)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "CPHA is Onxite's canonical metric for event value: Sponsorship Investment divided by Total Attention Hours. It measures what you actually pay for each hour of focused, multi-sensory human attention — unlike CPM which was built for 1.7-second digital impressions."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
